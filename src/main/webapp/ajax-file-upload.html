@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+ <head>
+	<script src="/js/jquery.min.js"></script>
+	<script src="/js/vendor/jquery.ui.widget.js"></script>
+    <script src="/js/jquery.iframe-transport.js"></script>
+    <script src="/js/jquery.fileupload.js"></script>
+    <script src="/js/jquery.fileupload-ui.js"></script>
+	<link rel="stylesheet" href="/css/jquery.fileupload-ui.css">
+  </head>
+  <body>
+      <div class="lift:FileUploadSnippet">
+        <script id="uploadScript"></script>
+          <h1>File Upload</h1>
+		  <span class="error lift:Msgs?showAll=true"></span>
+          <form>
+            <p>
+              <span class="fileinput-button">
+                <span>Add file</span>
+                <input id="uploadFile" type="file" name="file[]" multiple>
+              </span>
+            </p>
+            <p>
+              <table role="presentation" class="table table-striped">
+                <tbody class="files">
+                </tbody>
+              </table>
+            </p>  
+          </form>
+        <script>
+ $(document).ready(function () {
+  $('#uploadFile').fileupload({
+    url: uploadUrl,
+    dataType: 'json',
+    autoUpload: true,
+    filesContainer: $('.files'),
+    uploadTemplateId: null,
+    downloadTemplateId: null,
+    uploadTemplate: function (o) {
+      var rows = $();
+      $.each(o.files, function (index, file) {
+        var row = $('<tr class="template-upload fade">' +
+                    '<td class="name"></td>' +
+                    '<td class="size"></td>' +
+                    (file.error ? '<td class="error" colspan="2"></td>' : '<td><div class="progress">' +
+                     '<div class="bar" style="width:0%;"></div></div></td>'));
+        row.find('.name').text(file.name);
+        row.find('.size').text(o.formatFileSize(file.size));
+        if (file.error) {
+          row.find('.error').text(file.error);
+        }
+        rows = rows.add(row);});
+      return rows;
+    },
+    downloadTemplate: function (o) {
+      var rows = $();
+      $.each(o.files, function (index, file) {
+        var row = $('<tr class="template-download fade">' +
+                    (file.error ? '<td class="name"></td>' +
+                     '<td class="size"></td><td class="error text-error" colspan="2"></td>' :
+                     '<td class="name"></td>' +
+                     '<td colspan="2" class="text-success">Uploaded</td>'
+                     ));
+        row.find('.size').text(o.formatFileSize(file.size));
+        if (file.error) {
+          row.find('.name').text(file.name);
+          row.find('.error').text(file.error);
+        } else {
+          row.find('.name').text(file.name);
+        }
+        rows = rows.add(row);
+      });
+      return rows;
+    }
+  });
+});
+        </script>
+      </div>
+   
+  </body>
+</html>
